@@ -1,43 +1,10 @@
 import React, { useState } from "react";
 import Radio from "./components/Radio";
+import { perguntas } from "./components/perguntas";
 import './style.css'
 
 function App() {
-
-  const perguntas = [
-    {
-      pergunta: 'Qual método é utilizado para criar componentes?',
-      options: [
-        'React.makeComponent()',
-        'React.createComponent()',
-        'React.createElement()',
-      ],
-      resposta: 'React.createElement()',
-      id: 'p1',
-    },
-    {
-      pergunta: 'Como importamos um componente externo?',
-      options: [
-        'import Component from "./Component"',
-        'require("./Component")',
-        'import "./Component"',
-      ],
-      resposta: 'import Component from "./Component"',
-      id: 'p2',
-    },
-    {
-      pergunta: 'Qual hook não é nativo?',
-      options: ['useEffect()', 'useFetch()', 'useCallback()'],
-      resposta: 'useFetch()',
-      id: 'p3',
-    },
-    {
-      pergunta: 'Qual palavra deve ser utilizada para criarmos um hook?',
-      options: ['set', 'get', 'use'],
-      resposta: 'use',
-      id: 'p4',
-    },
-  ];
+  const [slide, setSlide] = useState(0)
 
   const [resposta, setResposta] = useState({
     p1: '',
@@ -50,22 +17,23 @@ function App() {
     setResposta({ ...resposta, [target.id]: target.value })
   }
 
-  const handleClick = () => {
-    setSlide(slide + 1)
+  const verificacao = () => {
+    const respostasCertas = perguntas.filter((item) => resposta[item.id] === item.resposta)
+    return respostasCertas.length
   }
 
-  const [slide, setSlide] = useState(0)
-
-
   return (
-    <div>
-      {perguntas.map((item, index) =>
-
-        <form className="formulario" key={item.id}>
-          <Radio {...item} onChange={handleChange} active={slide === index} />
-        </form>
-      )}
-      <button onClick={handleClick}>Próxima</button>
+    <div className="container">
+      {slide === perguntas.length ? <>Você acertou {verificacao()} de {perguntas.length} respostas!</> :
+        <>
+          {perguntas.map((item, index) =>
+            <form className="formulario" key={item.id}>
+              <Radio {...item} onChange={handleChange} active={slide === index} index={index} />
+            </form>
+          )}
+          <button onClick={() => { setSlide(slide + 1) }}>Próxima</button>
+        </>
+      }
     </div>
   );
 }
